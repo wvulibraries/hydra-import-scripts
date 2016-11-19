@@ -23,7 +23,8 @@ end
 import_return = Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV['HYDRA_PROJECT_NAME']}/") do
   |dir_name|
 
-  `rails runner import/import_test.rb #{data_file_location} #{export_locations}`
+  export_locations = "/mnt/nfs-exports/mfcs-exports/#{config['project_name']}/export/#{config['time_stamp']}"
+  `rails runner import/import_test.rb #{export_locations}`
 end
 
 # move control file as needed.
