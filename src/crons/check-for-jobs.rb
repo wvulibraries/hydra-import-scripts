@@ -1,21 +1,19 @@
 #!/bin/ruby
 require 'fileutils'
 
-# Config variables
+if (!ENV.include? 'HYDRA_PROJECT_NAME') then
+  puts "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
+  exit;
+end
 
-control_dir = "/mnt/nfs-exports/mfcs-exports/{{ project_name }}/control/mfcs";
-in_process_dir = "/mnt/nfs-exports/mfcs-exports/{{ project_name }}/control/hydra/in-progress/"
+control_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/mfcs";
+in_process_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/hydra/in-progress/"
 
-### Stop Editing ###
-
-project_name = ENV['HYDRA_PROJECT_NAME']
-control_dir = control_dir.gsub(/{{ project_name }}/, project_name)
-in_process_dir = in_process_dir.gsub(/{{ project_name }}/, project_name)
-
+# if there is already a control file in the processing directory, exit
 exit if Dir.entries(in_process_dir).length > 2
 
 Dir.open(control_dir).sort.each do |file|
   next if file =~ /^\./
-  FileUtils.mv("#{control_dir}/#{file}","#{in_process_dir}/#{file}")
+  FileUtils.mv("#{control_dir}/#{file}","#{in_process_dir}/control_file.yaml")
   break
 end
