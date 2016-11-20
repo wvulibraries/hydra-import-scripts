@@ -2,8 +2,7 @@
 require 'fileutils'
 
 if (!ENV.include? 'HYDRA_PROJECT_NAME') then
-  puts "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
-  exit;
+  abort "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
 end
 
 control_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/mfcs";

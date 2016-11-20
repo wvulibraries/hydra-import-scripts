@@ -1,11 +1,14 @@
 require 'yaml'
+require 'fileutils'
+require 'net/smtp'
 
 if (!ENV.include? 'HYDRA_PROJECT_NAME') then
-  puts "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
-  exit;
+  abort "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
 end
 
-in_process_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/hydra/in-progress/"
+in_process_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/hydra/in-progress"
+error_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/hydra/error"
+success_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/hydra/finished"
 
 # check if there is a control file
 # There should never be more than 3 entries (only 1 file in processing at a
@@ -15,24 +18,30 @@ exit if Dir.entries(in_process_dir).length != 3
 config=YAML.load_file("#{in_process_dir}/control_file.yaml")
 
 if (config['project_name'] != ENV['HYDRA_PROJECT_NAME']) then
-  puts "Project name in control file does not match ENV HYDRA_PROJECT_NAME"
-  exit;
+  abort "Project name in control file does not match ENV HYDRA_PROJECT_NAME"
 end
 
-# call rake command with required arguments
-import_return = Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV['HYDRA_PROJECT_NAME']}/") do
+Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV['HYDRA_PROJECT_NAME']}/") do
   |dir_name|
 
   export_locations = "/mnt/nfs-exports/mfcs-exports/#{config['project_name']}/export/#{config['time_stamp']}"
   `rails runner import/import_test.rb #{export_locations}`
   if (!$?.success?) then
-    "handle the error"
-    # move control file to the error directory
-    # rename control file back to its time stamp -- should it have a human readable time in it?
+    FileUtils.mv("#{in_process_dir}/control_file.yaml","error_dir/#{config['time_stamp']}.yaml")
+    send_notifications(config['contact_emails'], "Import of #{config['project_name']} failed.")
+    abort "Error processing. Moved to error control directory."
   else
-    "success"
+    send_notifications(config['contact_emails'], "Import of #{config['project_name']} succeeded.")
+    FileUtils.mv("#{in_process_dir}/control_file.yaml","success_dir/#{config['time_stamp']}.yaml")
   end
 end
 
-# move control file as needed.
-puts import_return
+def send_notifications(emailAddr, msgstr)
+
+  msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n #{msgstr}"
+
+  Net::SMTP.start('smtp.wvu.edu', 25) do |smtp|
+    smtp.send_message msgstr, 'libsys@mail.wvu.edu', emailAddr
+  end
+
+end
