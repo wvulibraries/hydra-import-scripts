@@ -25,6 +25,13 @@ import_return = Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV[
 
   export_locations = "/mnt/nfs-exports/mfcs-exports/#{config['project_name']}/export/#{config['time_stamp']}"
   `rails runner import/import_test.rb #{export_locations}`
+  if (!$?.success?) then
+    "handle the error"
+    # move control file to the error directory
+    # rename control file back to its time stamp -- should it have a human readable time in it?
+  else
+    "success"
+  end
 end
 
 # move control file as needed.
