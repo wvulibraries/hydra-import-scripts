@@ -2,6 +2,13 @@ require 'yaml'
 require 'fileutils'
 require 'net/smtp'
 
+def send_notifications(emailAddr, msgstr)
+  msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n #{msgstr}"
+  Net::SMTP.start('smtp.wvu.edu', 25) do |smtp|
+    smtp.send_message msgstr, 'libsys@mail.wvu.edu', emailAddr
+  end
+end
+
 if (!ENV.include? 'HYDRA_PROJECT_NAME') then
   abort "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
 end
@@ -34,14 +41,4 @@ Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV['HYDRA_PROJECT_N
     send_notifications(config['contact_emails'], "Import of #{config['project_name']} succeeded.")
     FileUtils.mv("#{in_process_dir}/control_file.yaml","success_dir/#{config['time_stamp']}.yaml")
   end
-end
-
-def send_notifications(emailAddr, msgstr)
-
-  msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n #{msgstr}"
-
-  Net::SMTP.start('smtp.wvu.edu', 25) do |smtp|
-    smtp.send_message msgstr, 'libsys@mail.wvu.edu', emailAddr
-  end
-
 end
