@@ -38,11 +38,11 @@ Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV['HYDRA_PROJECT_N
   |dir_name|
 
   export_locations = "/mnt/nfs-exports/mfcs-exports/#{config['project_name']}/export/#{config['time_stamp']}"
-  `/usr/local/bin/rails runner import/import.rb #{export_locations}`
+  result = `/usr/local/bin/rails runner import/import.rb #{export_locations}`
   if (!$?.success?) then
     FileUtils.mv("#{in_process_dir}/control_file.yaml","#{error_dir}/#{config['time_stamp']}.yaml")
     send_notifications(config['contact_emails'], "Import of #{config['project_name']} failed.")
-    abort "Error processing. Moved to error control directory."
+    abort "Error processing. Moved to error control directory. {#{result}}"
   else
     send_notifications(config['contact_emails'], "Import of #{config['project_name']} succeeded.")
     FileUtils.mv("#{in_process_dir}/control_file.yaml","#{success_dir}/#{config['time_stamp']}.yaml")
