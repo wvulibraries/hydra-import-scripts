@@ -2,6 +2,12 @@ require 'yaml'
 require 'fileutils'
 require 'net/smtp'
 
+# Don't allow multiple instances of this script to run at the same time
+f = File.open($PROGRAM_NAME, 'r')
+if (not f.flock(File::LOCK_EX | File::LOCK_NB))
+    exit
+end
+
 def send_notifications(emailAddr, msgstr)
   msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n #{msgstr}"
   Net::SMTP.start('smtp.wvu.edu', 25) do |smtp|
