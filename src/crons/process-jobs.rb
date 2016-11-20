@@ -38,7 +38,7 @@ Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV['HYDRA_PROJECT_N
   |dir_name|
 
   export_locations = "/mnt/nfs-exports/mfcs-exports/#{config['project_name']}/export/#{config['time_stamp']}"
-  `rails runner import/import.rb #{export_locations}`
+  `/usr/local/bin/rails runner import/import.rb #{export_locations}`
   if (!$?.success?) then
     FileUtils.mv("#{in_process_dir}/control_file.yaml","#{error_dir}/#{config['time_stamp']}.yaml")
     send_notifications(config['contact_emails'], "Import of #{config['project_name']} failed.")
