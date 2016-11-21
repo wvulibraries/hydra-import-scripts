@@ -6,6 +6,7 @@ if [[ -z $HYDRA_PROJECT_NAME ]]; then
 fi
 
 mkdir -p /mnt/nfs-exports/mfcs-exports/"$HYDRA_PROJECT_NAME"/control/
+mkdir -p /mnt/nfs-exports/mfcs-exports/"$HYDRA_PROJECT_NAME"/control/mfcs
 mkdir -p /mnt/nfs-exports/mfcs-exports/"$HYDRA_PROJECT_NAME"/control/hydra/error
 mkdir -p /mnt/nfs-exports/mfcs-exports/"$HYDRA_PROJECT_NAME"/control/hydra/finished
 mkdir -p /mnt/nfs-exports/mfcs-exports/"$HYDRA_PROJECT_NAME"/control/hydra/in-progress
