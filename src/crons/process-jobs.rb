@@ -34,7 +34,7 @@ if (config['project_name'] != ENV['HYDRA_PROJECT_NAME']) then
   abort "Project name in control file does not match ENV HYDRA_PROJECT_NAME"
 end
 
-Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/#{ENV['HYDRA_PROJECT_NAME']}/") do
+Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/hydra/") do
   |dir_name|
 
   export_locations = "/mnt/nfs-exports/mfcs-exports/#{config['project_name']}/export/#{config['time_stamp']}"
