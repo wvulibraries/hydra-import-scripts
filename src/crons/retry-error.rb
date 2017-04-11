@@ -3,6 +3,27 @@ require 'yaml'
 require 'fileutils'
 require 'net/smtp'
 
+#  retry-error
+# ==================================================
+# Name : David J. Davis
+# Date :  4/11/2017
+#
+# Requirements:  You must run add_project_env.sh first
+# so that the environmental variable is able to be used.
+#
+# Useage: From the terminal as root user run the command
+# ruby ./retry-error.rb {filename.yaml}
+#
+# Description: The following code goes through the following
+# checks to make sure that all items are present
+# ---- ENV['HYDRA_PROJECT_NAME']
+# ---- ARGV of a filename which is the error file
+# ---- Error File Exists
+# ---- Project Names Match
+#  If all exists it tries to run through the export script
+#  and if it passes the file is moved out of the error folder
+#  to the completed folder, if fails it is not moved.
+
 # Make Sure that the ENV variables are set
 if (!ENV.include? 'HYDRA_PROJECT_NAME') then
   abort "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
