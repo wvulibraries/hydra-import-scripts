@@ -9,7 +9,7 @@ if (not f.flock(File::LOCK_EX | File::LOCK_NB))
 end
 
 def send_notifications(emailAddr, msgstr)
-  msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n\n #{msgstr}"
+  msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n #{msgstr}"
   Net::SMTP.start('smtp.wvu.edu', 25) do |smtp|
     smtp.send_message msgstr, 'libsys@mail.wvu.edu', emailAddr
   end
@@ -45,10 +45,10 @@ Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/hydra/") do
   result = `/usr/local/bin/rails runner import/import.rb #{export_locations}`
   if (!$?.success?) then
     FileUtils.mv("#{in_process_dir}/control_file.yaml","#{error_dir}/#{config['time_stamp']}.yaml")
-    send_notifications(config['contact_emails'], "Import of #{config['project_name']} failed. #{$?.success?}")
+    send_notifications(config['contact_emails'], "Import of #{config['project_name']} failed.")
     abort "Error processing. Moved to error control directory. {#{result}}"
   else
-    send_notifications(config['contact_emails'], "Import of #{config['project_name']} succeeded. #{$?.success?}")
+    send_notifications(config['contact_emails'], "Import of #{config['project_name']} succeeded.")
     FileUtils.mv("#{in_process_dir}/control_file.yaml","#{success_dir}/#{config['time_stamp']}.yaml")
   end
 end
