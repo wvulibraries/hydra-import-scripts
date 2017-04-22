@@ -45,7 +45,7 @@ Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/hydra/") do
   result = `/usr/local/bin/rails runner import/import.rb #{export_locations}`
   if (!$?.success?) then
     FileUtils.mv("#{in_process_dir}/control_file.yaml","#{error_dir}/#{config['time_stamp']}.yaml")
-    send_notifications(config['contact_emails'], "Import of #{config['project_name']} failed! '#{Process.pid}' '#{$?.success?}'")
+    send_notifications(config['contact_emails'], "Import of #{config['project_name']} failed. '#{Process.pid}' '#{$?.success?}'")
     abort "Error processing. Moved to error control directory. {#{result}}"
   else
     send_notifications(config['contact_emails'], "Import of #{config['project_name']} succeeded. '#{Process.pid}' '#{$?.success?}'")
