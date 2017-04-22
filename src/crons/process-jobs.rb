@@ -15,9 +15,15 @@ def send_notifications(emailAddr, msgstr)
   end
 end
 
-if (!ENV.include? 'HYDRA_PROJECT_NAME') then
-  abort "Missing ENV variable, 'HYDRA_PROJECT_NAME'"
+def send_env_notifications(env_var)
+  # TODO: This should notify slack as well
+  send_notifications("mrbond@mail.wvu.edu", "ENV error: #{env_var}")
+  abort "Missing ENV variable, '#{env_var}'"
 end
+
+send_env_notifications("HYDRA_PROJECT_NAME") if !ENV.include? 'HYDRA_PROJECT_NAME'
+send_env_notifications("SECRET_KEY_BASE") if !ENV.include? 'SECRET_KEY_BASE'
+send_env_notifications("FEDORA_PASSWORD") if !ENV.include? 'FEDORA_PASSWORD'
 
 in_process_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/hydra/in-progress"
 error_dir = "/mnt/nfs-exports/mfcs-exports/#{ENV['HYDRA_PROJECT_NAME']}/control/hydra/error"
@@ -30,9 +36,7 @@ exit if Dir.entries(in_process_dir).length != 3
 
 config=YAML.load_file("#{in_process_dir}/control_file.yaml")
 
-if (config['project_name'] != ENV['HYDRA_PROJECT_NAME']) then
-  abort "Project name in control file does not match ENV HYDRA_PROJECT_NAME"
-end
+abort "Project name in control file does not match ENV HYDRA_PROJECT_NAME" if config['project_name'] != ENV['HYDRA_PROJECT_NAME']
 
 Dir.chdir("/home/#{ENV['HYDRA_PROJECT_NAME']}.lib.wvu.edu/hydra/") do
   |dir_name|
