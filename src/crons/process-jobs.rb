@@ -9,7 +9,7 @@ if (not f.flock(File::LOCK_EX | File::LOCK_NB))
 end
 
 def send_notifications(emailAddr, msgstr)
-  msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n #{msgstr}"
+  msgstr = "From: libsys@mail.wvu.edu\nSubject: Importing Update\n\n #{msgstr}"
   Net::SMTP.start('smtp.wvu.edu', 25) do |smtp|
     smtp.send_message msgstr, 'libsys@mail.wvu.edu', emailAddr
   end
