@@ -1,6 +1,6 @@
 # hydra-import-scripts
 
-## Example eexport file
+## Example export file
 
 ```
 ---
